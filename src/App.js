@@ -17,6 +17,7 @@ class App extends Component {
           {[...Array(10)].map((_, index) => (
             <div key={index}>
               <h3>I am a title: {index} </h3>
+              <img src="http://via.placeholder.com/350x150" />
             </div>
           ))}
         </Carousel>

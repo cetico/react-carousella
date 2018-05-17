@@ -1,12 +1,11 @@
 
 
-
+/* 
 
 .carousel { 
   position: relative;
   white-space: nowrap;
   overflow: hidden;
-  /* width: 800px; */
   user-select: none;
 }
 
@@ -19,7 +18,7 @@
 
 .tile {
   border: 2px solid slateblue;
-}
+} */
 
 .control {
   position: absolute;

@@ -14,7 +14,10 @@ import styles from './styles';
                                               O = loaded. X = not loaded. | | = visibility boundaries.
 
   CURRENT: make christiaan's sliding functionality (this.props.ultraMode=true). -->  X O | O O O | O X X X   
-
+  // when you click next slide full range of tilesToShow.
+  // add cell spacing between slides.
+  // disable buttons if no sliding at launch.
+  // SWAP FROM QUERYSELECTOR TO REFS SINCE QUERYSELECTOR CAUSES PROBLEMS WITH MULTIPLE CAROUSELS. (!IMPORTANT)
 
   increase the index at which components get mounted on touchMove. (DONE)
   QOL: increase onMouseMove area so whitespace can slide as well. (DONE)
@@ -81,11 +84,10 @@ export class Carousel extends Component {
     this.prevInnerWidth = window.innerWidth;
     this.originalSize = null;
     this.dragging = false;
+
+    this.carousel = React.createRef();
   }
 
-  get carousel() {
-    return document.querySelector('.carousel');
-  }
 
   get inner() {
     return document.querySelector('.inner')
@@ -417,7 +419,7 @@ export class Carousel extends Component {
   }
   
   calcWidth() {
-    return (this.carousel.clientWidth / this.props.tilesToShow)
+    return (this.carousel.current.clientWidth / this.props.tilesToShow)
   }
 
   render() {
@@ -437,10 +439,11 @@ export class Carousel extends Component {
     } = this.state;
 
     return (
-      <div {...props} className={`carousel ${className}`}>
+      <div {...props} className={`carousel ${className}`} ref={this.carousel} style={styles().carousel}>
         <LeftControl onClick={this.onLeftClick} />
         {this.state.mounted && 
-        <Inner 
+        <Inner
+          style={styles().inner}
           tilesToShow={tilesToShow}
           slideDuration={slideDuration}
           endIndex={endIndex}
@@ -456,6 +459,9 @@ export class Carousel extends Component {
 
 export default Carousel
 
+  // get carousel() {
+  //   return document.querySelector('.carousel');
+  // }
 
   // onMouseMove = e => {
     // if(e.buttons === 1 || e.buttons === 2) {
