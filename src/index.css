@@ -1,0 +1,46 @@
+
+
+
+
+.carousel { 
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
+  /* width: 800px; */
+  user-select: none;
+}
+
+
+.inner {
+  display: inline-block;
+  transform: matrix(1,0,0,1,0,0);
+  transition: transform 0.4s ease;
+}
+
+.tile {
+  border: 2px solid slateblue;
+}
+
+.control {
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+  z-index: 10;
+  background-color: darkslategray;
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 10px;
+  user-select: none;
+}
+
+.left {
+  left: 0;
+}
+
+.right {
+  right: 0;
+}
