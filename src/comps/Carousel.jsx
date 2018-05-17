@@ -80,6 +80,7 @@ export class Carousel extends Component {
     this.touchStart = null;
     this.prevInnerWidth = window.innerWidth;
     this.originalSize = null;
+    this.dragging = false;
   }
 
   get carousel() {
@@ -142,25 +143,25 @@ export class Carousel extends Component {
     }
 
     if(prevState.mounted !== this.state.mounted) {
-      this.inner.addEventListener('touchmove', this.onTouchMove)
+      window.addEventListener('touchmove', this.onTouchMove)
       this.inner.addEventListener('touchstart', this.onTouchStart)
-      this.inner.addEventListener('touchend', this.onTouchEnd);
-      this.carousel.addEventListener('mousemove', this.onMouseMove)
+      window.addEventListener('touchend', this.onTouchEnd);
+      window.addEventListener('mousemove', this.onMouseMove)
       this.inner.addEventListener('mousedown', this.onMouseDown)
-      this.inner.addEventListener('mouseleave', this.onMouseLeave)
       window.addEventListener('mouseup', this.onMouseUp)
+      this.inner.addEventListener('mouseleave', this.onMouseLeave)
       window.addEventListener('resize', this.onResize)
     }
   }
   
   componentWillUnmount() {
-    this.inner.removeEventListener('touchmove', this.onTouchMove)
+    window.removeEventListener('touchmove', this.onTouchMove)
     this.inner.removeEventListener('touchstart', this.onTouchStart)
-    this.inner.removeEventListener('touchend', this.onTouchEnd)    
-    this.carousel.removeEventListener('mousemove', this.onMouseMove)
+    window.removeEventListener('mousemove', this.onMouseMove)
+    window.removeEventListener('touchend', this.onTouchEnd)    
     this.inner.removeEventListener('mousedown', this.onMouseDown)
-    this.inner.removeEventListener('mouseleave', this.onMouseLeave)
     window.removeEventListener('mouseup', this.onMouseUp)
+    this.inner.removeEventListener('mouseleave', this.onMouseLeave)
     window.removeEventListener('resize', this.onResize)
   }
 
@@ -174,18 +175,16 @@ export class Carousel extends Component {
   }
 
   onMouseDown = (e) => {
-
+    this.dragging = true;
   }
 
   onMouseUp = (e) => {
     this.mouseMoveStart = 0;
+    this.dragging = false;
   }
 
   calcActiveTile() { 
     const matrixX = extractMatrix(this.inner.style.transform, 'x');
-    // console.log(`maxtrixX of inner is: ${Math.abs(matrixX)}`)
-    // console.log(`activeTile (${this.activeTile.dataset.index}) offsetLeft:  ${this.activeTile.offsetLeft}, width: ${this.activeTile.clientWidth}`)
-    // console.log('sum: ', (this.activeTile.offsetLeft + this.activeTile.clientWidth))
     
     if( Math.abs(matrixX) >= (this.activeTile.offsetLeft + this.activeTile.clientWidth) ) {
       this.activeTile = this.nextTile;
@@ -199,7 +198,7 @@ export class Carousel extends Component {
   
   onMouseMove = (e) => {
     
-    if(e.buttons === 0) {
+    if(e.buttons === 0 || !this.dragging) {
       return null;
     }
 
@@ -255,6 +254,7 @@ export class Carousel extends Component {
   onTouchStart = (e) => {
     // this.touchStart = e.touches[0].clientX
     this.touchStart = e.touches[0].clientX;
+    this.dragging = true;
   }
 
 
@@ -329,13 +329,14 @@ export class Carousel extends Component {
 
   onTouchEnd = (e) => {
     // this.restoreTransition(x.prevTransition);
+    this.dragging = false;
   }
 
 
   onLeftClick = (e) => {
 
     if(this.props.ultraMode) {
-      
+
     }
 
     if ( this.isClickSlideable('left') ) {
@@ -372,7 +373,9 @@ export class Carousel extends Component {
   isClickSlideable(direction) {
     const currentIndex = this.activeTile.dataset.index;
     const lastIndex = this.state.formattedChildren.length;
-    
+    // console.log(lastIndex);
+
+
     if(direction === 'right') {
 
       if(!this.nextTile ) {
