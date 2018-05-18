@@ -6,6 +6,25 @@ import { LeftControl } from './LeftControl';
 import styles from './styles';
 
 
+/* 
+  loopMode:
+  
+  OnClick change the active tile index to the next.
+  OnClick triggers a timer which will refresh on each click. 
+  if timer is done ( so for instance, timepassed > 400ms (transition duration) ) we do the dom removal updating.
+
+  Dom should then look like this if active tile index is 3 =>     (3 --- 8) 
+
+
+  Okay, keep state as integers based on the children array instead of DOM based. 
+
+
+
+  continuous scroll:
+  totalIndex % childrenlength.
+*/
+
+
 
 
 
@@ -44,10 +63,7 @@ export class Carousel extends Component {
       mounted: false,
       endIndex: this.props.tilesToShow,
       activeIndex: 0,
-      startRenderIndex: 0,
-      endRenderIndex: 0,
       formattedChildren: null,
-      changesCounter: 0
     }
 
     this.mouseMoveStart = null;
@@ -57,6 +73,9 @@ export class Carousel extends Component {
     this.dragging = false;
 
     this.carousel = React.createRef();
+
+    this.testIndex = 0
+    
   }
 
 
@@ -88,22 +107,23 @@ export class Carousel extends Component {
 
   }
 
+  
   set activeTile(nextTile) {
     Array.from(this.tiles).map(tile => (
       tile.classList.remove('active')
     ))
     nextTile.classList.add('active');
-
-
+    
+    
     const value = (+this.activeTile.dataset.index) + (+this.props.tilesToShow);
     const startIndex = 0;
-
+    
     this.setState({ 
       endIndex: value, 
-      changesCounter: this.state.changesCounter + 1,
       activeIndex: +nextTile.dataset.index 
     })
   }
+
 
   componentDidMount() {
     console.log('did mount')
@@ -175,7 +195,6 @@ export class Carousel extends Component {
   }
   
   onMouseMove = (e) => {
-    
     if(e.buttons === 0 || !this.dragging) {
       return null;
     }
@@ -207,21 +226,17 @@ export class Carousel extends Component {
     if(area === 'leftEnd') {
       this.inner.style.transform = `matrix(1,0,0,1,0,0)`; // snap to start.
     }
-    
     else if ( area === 'rightEnd') {
       const val = this.inner.clientWidth - x.tileWidth * (this.props.tilesToShow ); 
       this.inner.style.transform = `matrix(1,0,0,1,${-val - 1},0)`; // snap to end; -1 to ensure active is end. 
     }
-    
     else if (area === 'slide') {
       this.inner.style.transform = `matrix(1,0,0,1,${x.nextMatrixX},0)`;
       this.touchStart = x.clientX;
     }
-
     else {
       throw new Error ('this.calcTouchArea has not returnd "leftEnd" "rightEnd" or "slide"');
     }
-
     setTimeout(() => {
       this.inner.style.transition = x.prevTransition;
       this.mouseMoveStart = e.clientX;
@@ -311,12 +326,17 @@ export class Carousel extends Component {
   onLeftClick = (e) => {
 
     if(this.props.loopMode) {
-      
+      if(this.isClickSlideable('left')) {
+        this.testIndex--;
+      }
     }
 
-    if ( this.isClickSlideable('left') ) {
-      this.activeTile = this.prevTile;
-      this.goTile(this.activeTile);
+    else {
+
+      if ( this.isClickSlideable('left') ) {
+        this.activeTile = this.prevTile;
+        this.goTile(this.activeTile);
+      }
     }
   }
 
@@ -325,10 +345,10 @@ export class Carousel extends Component {
     // loopMODE:
     // activeTile always has to change on rightclick without any delays.
     // then transition => after transition dom update.
-
+    
     if(this.props.loopMode) {
       if(this.isClickSlideable('right')) {
-        this.activeTile = this.nextTile;
+        this.testIndex++;
       }
     }
 
@@ -354,6 +374,40 @@ export class Carousel extends Component {
   }
 
   isClickSlideable(direction) {
+    
+    
+
+    const length = (this.state.formattedChildren.length - 1); // from length to index based length.
+
+    if(this.props.loopMode) {
+
+      const nextIndex = this.testIndex + 1;
+      const nextEnd = nextIndex + this.props.tilesToShow;
+
+      if( direction === 'right') {
+
+        if(nextEnd <= length) {
+          return true;
+        } else {
+          return false;
+        }
+
+      }
+
+      else if (direction === 'left') {
+        const nextIndex = this.testIndex - 1;
+
+        if( nextIndex < 0) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+
+    }
+
+
+
     const currentIndex = this.activeTile.dataset.index;
     const lastIndex = this.state.formattedChildren.length;
     // console.log(lastIndex);

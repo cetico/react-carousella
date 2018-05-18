@@ -8,6 +8,8 @@ export class Inner extends Component {
       maxIndex: this.props.endIndex,
       // startIndex: 0
     }
+    // this.timer =
+    this.timer = Date.now();
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -56,16 +58,31 @@ export class Inner extends Component {
       //  startIndex
 
      } = this.state;
+     const end = activeIndex + tilesToShow + 1;
      
-     if( loopMode ) {
-      // console.log('activeIndex: ',   activeIndex, activeIndex+tilesToShow )
-      //  return children.slice(activeIndex, (tilesToShow + activeIndex ))
-      const end = activeIndex + tilesToShow + 1;
+  console.log(activeIndex);
+  console.log(activeIndex + (activeIndex + tilesToShow));   
 
-      return children.slice(activeIndex, end);
-     }
+    //  if( loopMode ) {
+    //   // console.log('activeIndex: ',   activeIndex, activeIndex+tilesToShow )
+    //   //  return children.slice(activeIndex, (tilesToShow + activeIndex ))
+      // const end = activeIndex + tilesToShow + 1;
 
-    return children.slice(0, maxIndex + 1);
+    //   return children.slice(activeIndex, end);
+    //  }
+
+    if( loopMode) {
+
+      // if(activeIndex > 0) {
+
+      //   return children.slice(activeIndex - 1, (activeIndex + tilesToShow + 1))
+      // } 
+      return children.slice(activeIndex, (activeIndex + tilesToShow))
+
+    } else {
+
+      return children.slice(0, maxIndex + 1);
+    }
   }
 
   render() {

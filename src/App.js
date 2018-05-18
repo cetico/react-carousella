@@ -12,7 +12,7 @@ class App extends Component {
           tilesToShow={5} 
           slideDuration={500} 
           easing={'ease'} 
-          // loopMode={true} // TO IMPLEMENT
+          loopMode={true} // TO IMPLEMENT
           infiniteScroll={false} //TO IMPLEMENT
           className="poop">
           {[...Array(10)].map((_, index) => (
@@ -27,7 +27,7 @@ class App extends Component {
           tilesToShow={5} 
           slideDuration={500} 
           easing={'ease'} 
-          // loopMode={true} // TO IMPLEMENT
+          loopMode={true} // TO IMPLEMENT
           infiniteScroll={false} //TO IMPLEMENT
           className="poop">
           {[...Array(10)].map((_, index) => (
@@ -42,7 +42,7 @@ class App extends Component {
           tilesToShow={5} 
           slideDuration={500} 
           easing={'ease'} 
-          // loopMode={true} // TO IMPLEMENT
+          loopMode={true} // TO IMPLEMENT
           infiniteScroll={false} //TO IMPLEMENT
           className="poop">
           {[...Array(10)].map((_, index) => (
