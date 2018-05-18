@@ -8,36 +8,7 @@ import styles from './styles';
 
 
 
-/*
 
-  ### TO-DO ###
-                                              O = loaded. X = not loaded. | | = visibility boundaries.
-
-  CURRENT: make christiaan's sliding functionality (this.props.ultraMode=true). -->  X O | O O O | O X X X   
-  // when you click next slide full range of tilesToShow.
-  // add cell spacing between slides.
-  // disable buttons if no sliding at launch.
-  // SWAP FROM QUERYSELECTOR TO REFS SINCE QUERYSELECTOR CAUSES PROBLEMS WITH MULTIPLE CAROUSELS. (!IMPORTANT)
-
-  increase the index at which components get mounted on touchMove. (DONE)
-  QOL: increase onMouseMove area so whitespace can slide as well. (DONE)
-  QOL: make last tile actually the last tile to where you can slide. (DONE)
-  QOL: re-adjust tile alignmnent so they fit perfectly in container when onMouseUp fired (so when done sliding with mouse/touch);
-  QOL: add smooth slide. (use goTile on end of touchmove and get next active offsetLeft?)
-  QOL: add laptop sliding support.
-  refractor (SEMI-IMPORTANT)
-
-  BUG: active not applied to last but one before last tile when you drag to end with mousemove
-  -------------------
-
-  ~features~
-  ULTRAMODE.
-  add onTouchMove handler for mobile devices. (IMPORTANT) (DONE)
-  recalc on resize. (IMPORTANT) (DONE)(with applying offsetLeft of activeTile instead of recalculating transform based on percentage)
-
-  ## THOUGHT BUBBLE ##
-  maybe combine isClickSlideable with isTouchSlideable..
-*/
 
 function extractMatrix(matrix, property) {
 
@@ -90,11 +61,11 @@ export class Carousel extends Component {
 
 
   get inner() {
-    return document.querySelector('.inner')
+    return this.carousel.current.querySelector('.inner')
   }
 
   get tiles() {
-    return document.querySelectorAll('.tile');
+    return this.carousel.current.querySelectorAll('.tile');
   }
 
   get activeTile() {
@@ -111,6 +82,10 @@ export class Carousel extends Component {
     if(this.activeTile) {
       return this.activeTile.previousElementSibling;
     } 
+  }
+
+  set loopActiveTile(nextTile ){
+
   }
 
   set activeTile(nextTile) {
@@ -131,6 +106,7 @@ export class Carousel extends Component {
   }
 
   componentDidMount() {
+    console.log('did mount')
     this.setState({ 
       mounted: true, 
       formattedChildren: this.formatChildren() 
@@ -145,7 +121,7 @@ export class Carousel extends Component {
     }
 
     if(prevState.mounted !== this.state.mounted) {
-      window.addEventListener('touchmove', this.onTouchMove)
+      this.inner.addEventListener('touchmove', this.onTouchMove)
       this.inner.addEventListener('touchstart', this.onTouchStart)
       window.addEventListener('touchend', this.onTouchEnd);
       window.addEventListener('mousemove', this.onMouseMove)
@@ -157,7 +133,7 @@ export class Carousel extends Component {
   }
   
   componentWillUnmount() {
-    window.removeEventListener('touchmove', this.onTouchMove)
+    this.inner.removeEventListener('touchmove', this.onTouchMove)
     this.inner.removeEventListener('touchstart', this.onTouchStart)
     window.removeEventListener('mousemove', this.onMouseMove)
     window.removeEventListener('touchend', this.onTouchEnd)    
@@ -254,7 +230,6 @@ export class Carousel extends Component {
   }
 
   onTouchStart = (e) => {
-    // this.touchStart = e.touches[0].clientX
     this.touchStart = e.touches[0].clientX;
     this.dragging = true;
   }
@@ -264,7 +239,6 @@ export class Carousel extends Component {
     if(nextMatrixX >= 0) {
       return 'leftEnd';
     }
-    // tileWidth * 3 is dirty hack. Must be * tilesToShow. 
     else if (this.inner.clientWidth + nextMatrixX <= tileWidth * (this.props.tilesToShow) ) {
       return 'rightEnd';
     }
@@ -297,7 +271,7 @@ export class Carousel extends Component {
         return (this.matrixX - this.moveAmount)
       },
     }
-
+ 
     this.inner.style.transition = `all 0s ease`;
     const area = this.calcTouchArea(x);
 
@@ -308,7 +282,6 @@ export class Carousel extends Component {
     else if ( area === 'rightEnd') {
       const val = this.inner.clientWidth - x.tileWidth * (this.props.tilesToShow ); 
       this.inner.style.transform = `matrix(1,0,0,1,${-val - 1},0)`; // snap to end; -1 to ensure active is end. 
-      //                                                               MAYBE MANUALLY SET ACTIVE TILE ?
     }
     
     else if (area === 'slide') {
@@ -337,8 +310,8 @@ export class Carousel extends Component {
 
   onLeftClick = (e) => {
 
-    if(this.props.ultraMode) {
-
+    if(this.props.loopMode) {
+      
     }
 
     if ( this.isClickSlideable('left') ) {
@@ -349,14 +322,22 @@ export class Carousel extends Component {
 
   onRightClick = (e) => {
 
-    if(this.props.ultraMode) {
+    // loopMODE:
+    // activeTile always has to change on rightclick without any delays.
+    // then transition => after transition dom update.
 
+    if(this.props.loopMode) {
+      if(this.isClickSlideable('right')) {
+        this.activeTile = this.nextTile;
+      }
     }
 
-    if(this.isClickSlideable('right')) {
-      this.activeTile = this.nextTile;
-      this.goTile(this.activeTile);
-    } 
+   else {
+     if(this.isClickSlideable('right')) {
+       this.activeTile = this.nextTile;
+       this.goTile(this.activeTile);
+      } 
+    }
   }
 
   formatChildren() {
@@ -414,8 +395,22 @@ export class Carousel extends Component {
 
 
   goTile(tile) {
+
     const offsetLeft = tile.offsetLeft;
     this.inner.style.transform = `matrix(1,0,0,1,${-offsetLeft},0)`;
+
+    if(this.props.loopMode) {
+      // setTimeout(() => {
+      //   const prevTransition = this.inner.style.transition;
+      //   this.inner.style.transition = 'all 0s ease';
+      //   this.inner.style.transform = `matrix(1,0,0,1,0,0)`;
+      //   setTimeout(() => {
+      //     this.inner.style.transition = prevTransition;
+      //   }, 400)
+      // },400)
+
+    }
+
   }
   
   calcWidth() {
@@ -428,8 +423,9 @@ export class Carousel extends Component {
       slideDuration,
       easing,
       className, 
-      ultraMode,
+      loopMode,
       infiniteScroll,
+      children,
       ...props
     } = this.props;
 
@@ -440,7 +436,9 @@ export class Carousel extends Component {
 
     return (
       <div {...props} className={`carousel ${className}`} ref={this.carousel} style={styles().carousel}>
-        <LeftControl onClick={this.onLeftClick} />
+        <LeftControl 
+        onClick={this.onLeftClick} 
+        show={tilesToShow <= children.length} />
         {this.state.mounted && 
         <Inner
           style={styles().inner}
@@ -448,10 +446,13 @@ export class Carousel extends Component {
           slideDuration={slideDuration}
           endIndex={endIndex}
           activeIndex={activeIndex}
+          loopMode={loopMode}
           easing={easing}> 
             {this.state.formattedChildren}
           </Inner>}
-        <RightControl onClick={this.onRightClick} />
+        <RightControl 
+        onClick={this.onRightClick} 
+        show={tilesToShow <= children.length} />
       </div>
     )
   }

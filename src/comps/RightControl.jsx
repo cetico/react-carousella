@@ -3,7 +3,12 @@ import React, { Component } from 'react'
 export class RightControl extends Component {
   render() {
     return (
-      <button onClick={this.props.onClick} className="control right">{'>'}</button>      
+      <React.Fragment>
+        {this.props.show ? 
+        <button onClick={this.props.onClick} className="control right">{'>'}</button> 
+        :
+        null}      
+      </React.Fragment>
     )
   }
 }

@@ -47,7 +47,8 @@ export class Inner extends Component {
     const { 
       children,
       activeIndex,
-      tilesToShow
+      tilesToShow,
+      loopMode
      } = this.props;
 
      const {
@@ -56,13 +57,18 @@ export class Inner extends Component {
 
      } = this.state;
      
-     console.log(activeIndex)
+     if( loopMode ) {
+      // console.log('activeIndex: ',   activeIndex, activeIndex+tilesToShow )
+      //  return children.slice(activeIndex, (tilesToShow + activeIndex ))
+      const end = activeIndex + tilesToShow + 1;
+
+      return children.slice(activeIndex, end);
+     }
 
     return children.slice(0, maxIndex + 1);
   }
 
   render() {
-    // console.log(this.props)
     return (
       <div className='inner'>
         {this.renderChildren()}
