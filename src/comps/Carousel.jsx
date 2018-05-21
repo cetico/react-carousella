@@ -128,7 +128,7 @@ export class Carousel extends Component {
   componentDidMount() {
     console.log('did mount')
     this.setState({ 
-      mounted: true, 
+      mounted:           true, 
       formattedChildren: this.formatChildren() 
     })
   }
@@ -172,14 +172,17 @@ export class Carousel extends Component {
 
   }
 
+
   onMouseDown = (e) => {
     this.dragging = true;
   }
+
 
   onMouseUp = (e) => {
     this.mouseMoveStart = 0;
     this.dragging = false;
   }
+
 
   calcActiveTile() { 
     const matrixX = extractMatrix(this.inner.style.transform, 'x');
@@ -194,6 +197,7 @@ export class Carousel extends Component {
 
   }
   
+
   onMouseMove = (e) => {
     if(e.buttons === 0 || !this.dragging) {
       return null;
@@ -244,6 +248,7 @@ export class Carousel extends Component {
     })
   }
 
+  
   onTouchStart = (e) => {
     this.touchStart = e.touches[0].clientX;
     this.dragging = true;
@@ -345,7 +350,7 @@ export class Carousel extends Component {
     // loopMODE:
     // activeTile always has to change on rightclick without any delays.
     // then transition => after transition dom update.
-    
+
     if(this.props.loopMode) {
       if(this.isClickSlideable('right')) {
         this.testIndex++;
@@ -375,8 +380,6 @@ export class Carousel extends Component {
 
   isClickSlideable(direction) {
     
-    
-
     const length = (this.state.formattedChildren.length - 1); // from length to index based length.
 
     if(this.props.loopMode) {
@@ -399,7 +402,8 @@ export class Carousel extends Component {
 
         if( nextIndex < 0) {
           return false;
-        } else {
+        } 
+        else {
           return true;
         }
       }
@@ -512,7 +516,7 @@ export class Carousel extends Component {
   }
 }
 
-export default Carousel
+export default Carousel;
 
   // get carousel() {
   //   return document.querySelector('.carousel');
