@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 // import CarouselChris from './comps/Carousel2';
-import Carousel from './comps/Carousel3';
+import Carousel from './comps/Carousel';
 
 
 class App extends Component {
