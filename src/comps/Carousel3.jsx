@@ -19,6 +19,11 @@ function formatChildren(children, width) {
   ))) : null
 }
 
+function extractMatrix(matrix, prop) {
+  if(prop === 'x') {
+    return matrix.split(',')[0]
+  }
+} 
 
 export class Carousel extends Component {
   constructor() {
@@ -49,6 +54,7 @@ export class Carousel extends Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    console.log('derivedState')
     if(nextProps.children !== prevState.children && prevState.children !== null) {
       return {
         children: formatChildren(nextProps.children, prevState.slideWidth)
@@ -82,7 +88,7 @@ export class Carousel extends Component {
 
   getSnapshotBeforeUpdate(prevProps, prevState) {
     return {
-      inner: this.inner.current.style.left
+      inner: extractMatrix(window.getComputedStyle(this.inner.current).transform, 'x')
     }
   }
 
@@ -94,20 +100,15 @@ export class Carousel extends Component {
       ) {
 
         if(prevState.renderStart < this.state.renderStart || prevState.renderEnd < this.state.renderEnd) {
-          console.dir(this.inner.current)
-          const el = this.inner.current.querySelector(`[data-index="${this.state.index}"]`)
-          const offset = -el.offsetLeft;
-          this.setState((prevState) => {
-            this.inner.current.transition = 'left 0s ease';
-            return ({
-              left: 0
-            })
-          }, (prevState) => {
-            this.inner.current.transition = 'left 0.5s ease';
+            console.log('updated to next.')
+            const el = this.inner.current.querySelector(`[data-index="${this.state.index}"]`)
             this.setState({
-              left: offset
+              left: -el.offsetLeft,
+              transition: true
             })
-          })
+        } else if (prevState.renderStart > this.state.renderStart || prevState.renderEnd > this.state.renderEnd) {
+          console.log('updated to prev.')
+          const el = this.inner.current.querySelector(`[data-index="${this.state.index}"]`)
         }
       }
     }
@@ -249,36 +250,42 @@ export class Carousel extends Component {
 
 
   onNext = (e) => {
-    if (this.clickReady(Date.now()) ) {
+    if ( this.clickReady(Date.now()) ) {
       const nextIndex = Math.min(this.state.children.length - this.props.slidesToShow, this.state.index + this.props.slideAmount)
       const el = this.inner.current.querySelector(`[data-index="${nextIndex}"]`)
-      // console.log(el);
-      // console.log(el.offsetLeft);
-      this.setState((prevState) => ({
+      console.log('nextIndex: ', nextIndex);
+      
+      // this.inner.current.transition = 'all 0s ease';
+      this.setState({
         index: nextIndex,
         renderStart: nextIndex - this.props.slidesToShow,
         renderEnd: nextIndex + (this.props.slidesToShow * 2),
         left: 0,
         dragging: false,
-      }))
+        transition: false
+      })
     }
   }
 
   onPrev = (e) => {
     if (this.clickReady(Date.now())) {
       const prevIndex = Math.max(0, this.state.index - this.props.slideAmount);
-      const el = this.inner.current.querySelector(`[data-index="${prevIndex}"]`)
-      console.log('prevIndex: ', prevIndex)
-      console.log(el);
-      console.log('renderEnd: ', prevIndex + (this.props.slidesToShow * 2))
+      const el = this.inner.current.querySelector(`[data-index="${this.state.index}"]`)
 
       this.setState((prevState) => ({
         index: prevIndex,
         renderStart: Math.max(0, prevIndex - this.props.slidesToShow),
         renderEnd: (+prevIndex) + (this.props.slidesToShow * 2),
-        left: 0,
-        dragging: false    
-      }), () => this.setState({left: this.state.index === 0 ? 0 : -el.offsetLeft}))
+        dragging: false,
+        // left: -el.offsetLeft + 300,
+        transition: false    
+      }), () => this.setState((prevState) => {
+      const el = this.inner.current.querySelector(`[data-index="${this.state.index}"]`)        
+        return {
+          transition: false
+        }
+      })
+    )
     }
   }
 
@@ -313,7 +320,7 @@ export class Carousel extends Component {
 
 
   render() {
-    // console.log(this.state.phantomMoved)
+    console.log(this.state.index)
     const {
       children,
       className,
@@ -322,11 +329,15 @@ export class Carousel extends Component {
     } = this.props;
     // console.log(this.state.renderStart);
     // console.log(this.state.renderEnd);
+    // console.log(this.state.left)
     return (
       <div ref={this.outer} className='outer'>
         <div 
           ref={this.inner}
-          style={{left: this.state.left}}
+          style={{
+            transform: `matrix(1,0,0,1,${this.state.left},0)`,
+            transition: this.state.transition && !this.state.dragging ? 'all 0.5s ease' : 'all 0s ease'
+          }}
           onTouchStart={this.onTouchStart}
           onTouchMove={this.onTouchMove}
           onTouchEnd={this.onTouchEnd} 
