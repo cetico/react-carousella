@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import _ from '../utils/lodash.js';
-
+import { extractMatrix } from '../utils/helpers'
 
 export class Inner extends Component {
   constructor() {
@@ -45,17 +45,26 @@ export class Inner extends Component {
     this.inner.current.style.transition = `transform ${slideDuration / 1000}s ${easing}`;
   }
 
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    const first = _.first(this.slides)
+    return {
+      firstSlide: first,
+    }
+  }
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     // need to detect if we swiped or clicked button and direction.. 
     console.log('inner componentDidUpdate');
 
 
+    const inner = this.inner.current;
+    const slideWidth = this.calcWidth();
+    const transition = inner.style.transition;
+    const direction = this.getDirection(prevState.index, this.state.index);
+    const matrix = extractMatrix(inner, 'x');
+
     if(!this.props.dragging) {
 
-      const inner = this.inner.current;
-      const slideWidth = this.calcWidth();
-      const transition = inner.style.transition;
-      const direction = this.getDirection(prevState.index, this.state.index);
       
       if(direction === 'next') {
         inner.style.transition = 'all 0s ease';
@@ -83,9 +92,14 @@ export class Inner extends Component {
     }
 
     else if (this.props.dragging) {
-      var x = _.first(this.slides)
-      // console.log(this.state.index)
-      console.log(x)
+
+      if(_.first(this.slides) !== snapshot.firstSlide) {
+        inner.style.transition = 'all 0s ease';
+        inner.style.transform = `matrix(1,0,0,1,${matrix + slideWidth},0)`;
+          setTimeout(() => {
+            inner.style.transition = transition;
+        })
+      }
     }
   }
  

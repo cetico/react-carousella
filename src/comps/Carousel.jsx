@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Inner from './Inner';
 import DefaultControls from './DefaultControls';
+import _ from '../utils/lodash'
 
 const styles = {
   carousel: {
@@ -25,7 +26,9 @@ export class Carousel extends Component {
       rightIndex: this.props.slidesToShow,
       children: null,
       slidesToShow: this.props.slidesToShow,
-      dragging: false
+      dragging: false,
+      test: false,
+      counter: 0
     }
     
     this.clickTimer = Date.now();
@@ -115,26 +118,54 @@ export class Carousel extends Component {
     const transition = this.inner.style.transition;
     this.inner.style.transition = 'all 0s ease';
 
-    const activeSlide = this.slides[this.state.index];
-    const leftEdge = activeSlide.offsetLeft - this.props.spacing;
-    const rightEdge = activeSlide.offsetLeft + activeSlide.clientWidth + this.props.spacing;
-
-    console.log(rightEdge + x.nextMatrix)
-    console.log(rightEdge);
-
-    if(rightEdge + x.nextMatrix <= 0) {
-      
-      this.setState({index: this.state.index + 1, dragging: true})
-    } else {
-      this.inner.style.transform = `matrix(1,0,0,1,${x.nextMatrix},0)`;
-    }
+    // console.log(this.slides);
+    // console.log(this.state.index);
+    // const activeSlide = this.slides[this.state.index];
+    // const leftEdge = activeSlide.offsetLeft - this.props.spacing;
+     
     
     
-    this.touch.start = e.touches[0].clientX;
-    setTimeout(() => {
-      this.inner.style.transition = transition;
-      })
+    
+    // let rightEdge = activeSlide.offsetLeft + activeSlide.clientWidth + this.props.spacing;
+
+    // this.inner.style.transform = `matrix(1,0,0,1,${x.nextMatrix},0)`;      
+    // if( +(_.first(this.slides).dataset.index) !== 0) {
+    //   // console.log(rightEdge);
+    //   // console.log(x.nextMatrix)
+    //   console.log(rightEdge + x.nextMatrix - activeSlide.clientWidth - (this.props.spacing * 2));
+    //   const equation = rightEdge + x.nextMatrix - activeSlide.clientWidth - (this.props.spacing * 2);
+
+    //   if(!this.state.test) {
+    //     if (equation <= 0 ) {
+    //       this.setState({index: this.state.index + 1, dragging: true, test: true, counter: this.state.counter + 1}, () => console.log('state index: ' + this.state.index))
+    //     } 
+    //   } else {
+    //     console.log('else')
+    //     const x = equation - (this.state.counter * (activeSlide.clientWidth + (this.props.spacing * 2)));
+    //     console.log(x);
+    //     console.log(this.state.counter)
+    //     if(x <= 0) {
+          
+    //       this.setState({index: this.state.index + 1, dragging: true, test: true, counter: this.state.counter + 1}, () => console.log('state index: ' + this.state.index))
+    //     }
+
+    //   }
     // }
+    // else {
+    //   if(rightEdge + x.nextMatrix <= 0) {
+        
+    //     // this.inner.style.transform = `matrix(1,0,0,1,${x.nextMatrix},0)`;
+    //     this.setState({index: this.state.index + 1, dragging: true}, () => console.log('state index: ', this.state.index))
+    //   } else {
+    //     // this.inner.style.transform = `matrix(1,0,0,1,${x.nextMatrix},0)`;
+    //   }
+      
+      
+    // }
+    // this.touch.start = e.touches[0].clientX;
+    // setTimeout(() => {
+    //   this.inner.style.transition = transition;
+    // })
 
   }
 

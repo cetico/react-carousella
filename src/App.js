@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 // import CarouselChris from './comps/Carousel2';
-import Carousel from './comps/Carousel';
+import Carousel from './comps/Carousel3';
 
 
 class App extends Component {
 
   state = {
-    amount: 35
+    amount: 10
   }
 
   add = (e) => this.setState((prevState) => {
@@ -17,7 +17,6 @@ class App extends Component {
 
 
   render() {
-    console.log(this.state.amount)
     return (
       <div className="App">
         <h1>React Carousel</h1>
@@ -28,7 +27,7 @@ class App extends Component {
           slideAmount={3}
           spacing={10}
           easing={'ease'}
-          height={'equal'}
+          height={'dynamic'}
           // controls={Controls}
           slideDuration={500}> 
           {[...Array(this.state.amount)].map((_, i) => {
