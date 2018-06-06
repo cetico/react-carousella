@@ -1,0 +1,27 @@
+.slider {
+  overflow: hidden;
+  position: relative;
+}
+.inner {
+  display: inline-flex;
+}
+
+.back {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translate(0, -50%);
+  z-index: 10;
+}
+
+.next {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(0, -50%);
+  z-index: 10;
+}
+
+.example-enter {
+  color: red;
+}

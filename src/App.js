@@ -1,12 +1,21 @@
 import React, { Component } from 'react';
 // import CarouselChris from './comps/Carousel2';
-import Carousel from './comps/Carousel3';
+import Carousel from './container/Slider';
+// import Carousel from './comps/Carousel3';
 
+const Controls = (props) => (
+  <React.Fragment>
+      <button onClick={props.onBackClick} className="back">back</button>
+      <button onClick={props.onNextClick} className="next">next</button>
+    </React.Fragment>
+)
 
 class App extends Component {
 
   state = {
-    amount: 10
+    amount: 22,
+    slidesToShow: 3,
+    slideAmount: 2
   }
 
   add = (e) => this.setState((prevState) => {
@@ -15,6 +24,11 @@ class App extends Component {
     }
   })
 
+  slides = (e, amount) => this.setState((prevState) => {
+    return {
+      slidesToShow: prevState.slidesToShow + amount
+    }
+  })
 
   render() {
     return (
@@ -22,23 +36,23 @@ class App extends Component {
         <h1>React Carousel</h1>
         <hr />
         <button onClick={this.add}>add 5 more children</button>
+        <button onClick={(e) => this.slides(e, +1)}>add slides</button>
+        <button onClick={(e) => this.slides(e, -1)}>remove slides</button>
         <Carousel 
-          slidesToShow={3}
-          slideAmount={3}
+          slidesToShow={this.state.slidesToShow}
+          slideAmount={this.state.slideAmount}
           spacing={10}
-          easing={'ease'}
-          height={'dynamic'}
-          // controls={Controls}
-          slideDuration={500}> 
+          controls={Controls}
+          slideDuration={500}
+        > 
           {[...Array(this.state.amount)].map((_, i) => {
 
             if(i === 0) {
               return (
-
-                <div key={i}>
-              <h1>I'm {i}. What's up. Wooohooo, im extra big! wooo</h1>
-              <div className={'img-' + i} />
-            </div>
+              <div key={i}>
+                <h1>I'm {i}. What's up.</h1>
+                <div className={'img-' + i} />
+              </div>
               )
             } else {
               return (
@@ -50,21 +64,6 @@ class App extends Component {
             }
           })}  
         </Carousel>
-
-        {/* <CarouselChris
-          tilesToShow={5} 
-          slideDuration={500} 
-          easing={'ease'} 
-          loopMode={true} // TO IMPLEMENT
-          infiniteScroll={false} //TO IMPLEMENT
-          className="poop">
-          {[...Array(50)].map((_, index) => (
-            <div key={index}>
-              <h3>I am a title: {index} </h3>
-              <div className='cover' />
-            </div>
-          ))}
-        </CarouselChris> */}
       </div>
     );
   }
