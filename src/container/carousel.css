@@ -1,11 +1,9 @@
-.slider {
+.carousel {
   overflow: hidden;
   position: relative;
-  z-index: -1;
 }
 .inner {
   display: flex;
-  z-index: -1;
 }
 
 .back {
@@ -13,7 +11,7 @@
   left: 0;
   top: 50%;
   transform: translate(0, -50%);
-  z-index: 100;
+  z-index: 10;
 }
 
 .next {
@@ -21,5 +19,12 @@
   right: 0;
   top: 50%;
   transform: translate(0, -50%);
-  z-index: 100;
+  z-index: 10;
+}
+
+.next.disabled {
+  visibility: hidden;
+}
+.back.disabled {
+  visibility: hidden;
 }

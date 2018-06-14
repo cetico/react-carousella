@@ -1,27 +1,14 @@
-
-
-
-
-.outer {
-  position: relative;
-  overflow: hidden;
-  user-select: none;
-}
-
-.inner {
-  display: inline-block;
-  white-space: nowrap;
-  position: relative;
-  /* flex-wrap: nowrap; */
-  transform: matrix(1,0,0,1,0,0);
-  /* transition: all 0.5s ease; */
-}
-
-/* .slide {
+html {
   box-sizing: border-box;
-  display: inline-block;
-  overflow: hidden;  
-  border: 1px solid salmon;
-} */
-
-
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  padding: 0;
+  margin: 0;
+}
