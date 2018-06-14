@@ -1,0 +1,30 @@
+.carousel {
+  overflow: hidden;
+  position: relative;
+}
+.inner {
+  display: flex;
+}
+
+.back {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translate(0, -50%);
+  z-index: 10;
+}
+
+.next {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(0, -50%);
+  z-index: 10;
+}
+
+.next.disabled {
+  visibility: hidden;
+}
+.back.disabled {
+  visibility: hidden;
+}

@@ -1,9 +1,11 @@
 import first from 'lodash/first';
 import last from 'lodash/last';
+// import times from 'lodash/times';
 
 const _ = {
   first,
-  last
-}
+  last,
+  // times,
+};
 
-export default _
+export default _;
