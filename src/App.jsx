@@ -1,5 +1,5 @@
 import React from 'react';
-import Root from './container/Root';
+import Root from './cons/Root';
 
 const App = () => (
   <React.Fragment>
